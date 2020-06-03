@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">TV Catalogue</string>
+    <string name="name">Name</string>
+    <string name="description">Description</string>
+    <string name="Film">Film</string>
+    <string name="idunno">idunno</string>
+    <string name="trailer">Trailer</string>
+    <string name="Trailer">Trailer</string>
+    <string name="title1">Favorite</string>
+    <string name="title2">Change Language</string>
+    <string name="airing_today">Airing Today</string>
+    <string name="tv_popular">TV Popular</string>
+    <string name="tv_top_rated">TV Top Rated</string>
+    <string name="tv_favorited">Favorite List</string>
+    <string name="search">Search</string>
+
+</resources>
