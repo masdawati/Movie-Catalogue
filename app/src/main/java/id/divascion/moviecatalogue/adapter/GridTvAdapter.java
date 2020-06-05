@@ -2,15 +2,14 @@ package id.divascion.moviecatalogue.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -19,14 +18,13 @@ import java.util.ArrayList;
 import id.divascion.moviecatalogue.BuildConfig;
 import id.divascion.moviecatalogue.R;
 import id.divascion.moviecatalogue.model.tv.Tv;
-import id.divascion.moviecatalogue.ui.DetailActivity;
 
-public class ListTvAdapter extends RecyclerView.Adapter<ListTvAdapter.ViewHolder> {
+public class GridTvAdapter extends RecyclerView.Adapter<GridTvAdapter.ViewHolder> {
 
     private Context context;
     private ArrayList<Tv> listTv;
 
-    public ListTvAdapter(Context context) {
+    public GridTvAdapter(Context context) {
         this.context = context;
     }
 
@@ -45,16 +43,15 @@ public class ListTvAdapter extends RecyclerView.Adapter<ListTvAdapter.ViewHolder
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_list, viewGroup, false);
-        return new ViewHolder(view);
+    public GridTvAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_grid, viewGroup, false);
+        return new GridTvAdapter.ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, @SuppressLint("RecyclerView") final int i) {
-        viewHolder.tvName.setText(getListTv().get(i).getName());
-        viewHolder.tvDescription.setText(getListTv().get(i).getDescription());
-        viewHolder.tvDate.setText(getListTv().get(i).getDate());
+    public void onBindViewHolder(@NonNull GridTvAdapter.ViewHolder viewHolder, @SuppressLint("RecyclerView") final int i) {
+        final String name = getListTv().get(i).getName();
+        viewHolder.tvName.setText(name);
         String photo = BuildConfig.MOVIE_POSTER + getListTv().get(i).getPoster();
         Glide.with(context)
                 .load(photo)
@@ -63,10 +60,7 @@ public class ListTvAdapter extends RecyclerView.Adapter<ListTvAdapter.ViewHolder
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(), DetailActivity.class);
-                intent.putExtra("tv", getListTv().get(i));
-                Log.e("Title", getListTv().get(i).getName());
-                getContext().startActivity(intent);
+                Toast.makeText(context, name, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -78,17 +72,12 @@ public class ListTvAdapter extends RecyclerView.Adapter<ListTvAdapter.ViewHolder
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvName;
-        TextView tvDescription;
         ImageView ivPhoto;
-        TextView tvDate;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvName = itemView.findViewById(R.id.tv_item_name);
-            tvDescription = itemView.findViewById(R.id.tv_item_desc);
-            ivPhoto = itemView.findViewById(R.id.iv_item_photo);
-            tvDate = itemView.findViewById(R.id.tv_item_date);
+            tvName = itemView.findViewById(R.id.tv_item_name_grid);
+            ivPhoto = itemView.findViewById(R.id.iv_item_photo_grid);
         }
     }
 }
-

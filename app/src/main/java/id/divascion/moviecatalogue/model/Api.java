@@ -75,6 +75,24 @@ public class Api {
         return url;
     }
 
+    public static URL getCredits(String id) {
+        Uri uri = Uri.parse(BASE_URL).buildUpon()
+                .appendPath("3")
+                .appendPath("tv")
+                .appendPath(id)
+                .appendPath("credits")
+                .appendQueryParameter(ID, API_KEY)
+                .appendQueryParameter("language", "en-US")
+                .build();
+        URL url = null;
+        try {
+            url = new URL(uri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return url;
+    }
+
 }
 
 

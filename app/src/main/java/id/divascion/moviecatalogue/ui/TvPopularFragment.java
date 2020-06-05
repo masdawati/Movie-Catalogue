@@ -1,4 +1,4 @@
-package id.divascion.moviecatalogue.view;
+package id.divascion.moviecatalogue.ui;
 
 import android.annotation.SuppressLint;
 import android.os.AsyncTask;
@@ -16,12 +16,6 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 
-import id.divascion.moviecatalogue.R;
-import id.divascion.moviecatalogue.adapter.ListTvAdapter;
-import id.divascion.moviecatalogue.model.Api;
-import id.divascion.moviecatalogue.model.Network;
-import id.divascion.moviecatalogue.presenter.Tv;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,20 +24,27 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class TvAiringTodayFragment extends Fragment implements SearchView.OnQueryTextListener {
+import id.divascion.moviecatalogue.R;
+import id.divascion.moviecatalogue.adapter.ListTvAdapter;
+import id.divascion.moviecatalogue.model.Api;
+import id.divascion.moviecatalogue.model.Network;
+import id.divascion.moviecatalogue.model.tv.Tv;
+
+public class TvPopularFragment extends Fragment implements SearchView.OnQueryTextListener {
 
     private RecyclerView rvMain;
     private ProgressBar pbMain;
     private ArrayList<Tv> listTv;
     private ArrayList<Tv> tempTv;
-    private ListTvAdapter listFilmAdapter;
     private SearchView searchView;
+    private ListTvAdapter listFilmAdapter;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_tv_airing_today, container, false);
-        rvMain = view.findViewById(R.id.rv_main);
-        pbMain = view.findViewById(R.id.pb_main);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_tv_popular, container, false);
+        rvMain = view.findViewById(R.id.rv_main2);
+        pbMain = view.findViewById(R.id.pb_main2);
         return view;
     }
 
@@ -66,7 +67,7 @@ public class TvAiringTodayFragment extends Fragment implements SearchView.OnQuer
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    private void showRecyclerList(){
+    private void showRecyclerList() {
         listFilmAdapter = new ListTvAdapter(getActivity());
         listFilmAdapter.setListTv(listTv);
         rvMain.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -74,7 +75,7 @@ public class TvAiringTodayFragment extends Fragment implements SearchView.OnQuer
     }
 
     private void loadData() {
-        URL url = Api.getAiring();
+        URL url = Api.getPopular();
         Log.e("url", url.toString());
         new TvAsyncTask().execute(url);
     }
@@ -87,12 +88,12 @@ public class TvAiringTodayFragment extends Fragment implements SearchView.OnQuer
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        if (!newText.isEmpty()){
+        if (!newText.isEmpty()) {
             listTv.clear();
             newText = newText.toLowerCase();
-            for (int i =0; i<tempTv.size(); i++){
+            for (int i = 0; i < tempTv.size(); i++) {
                 String title = tempTv.get(i).getName().toLowerCase();
-                if (title.contains(newText)){
+                if (title.contains(newText)) {
                     listTv.add(tempTv.get(i));
                 }
             }
@@ -122,6 +123,7 @@ public class TvAiringTodayFragment extends Fragment implements SearchView.OnQuer
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            Log.e("result", result);
             return result;
         }
 
@@ -136,7 +138,7 @@ public class TvAiringTodayFragment extends Fragment implements SearchView.OnQuer
                 JSONObject jsonObject = new JSONObject(s);
                 JSONArray jsonArray = jsonObject.getJSONArray("results");
 
-                for (int i=0; i<jsonArray.length(); i++){
+                for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject object = jsonArray.getJSONObject(i);
                     Tv tvList = new Tv(object);
                     listTv.add(tvList);
@@ -147,7 +149,6 @@ public class TvAiringTodayFragment extends Fragment implements SearchView.OnQuer
             }
             listFilmAdapter.setListTv(listTv);
         }
-
 
     }
 

@@ -1,7 +1,8 @@
-package id.divascion.moviecatalogue.presenter;
+package id.divascion.moviecatalogue.model.tv;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 

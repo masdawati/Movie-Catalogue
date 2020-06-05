@@ -12,6 +12,8 @@ android {
         buildConfigField "String", "BASE_URL", "\"https://api.themoviedb.org/\""
         buildConfigField "String", "MOVIEDB_API_KEY", "\"87ad4048663561d44a10525e66825129\""
         buildConfigField "String", "MOVIE_POSTER", "\"https://image.tmdb.org/t/p/w185_and_h278_bestv2/\""
+        buildConfigField "String", "MOVIE_PROFILE", "\"https://image.tmdb.org/t/p/w138_and_h175_face\""
+        buildConfigField "String", "PROFILE_DEFAULT", "\"https://vignette.wikia.nocookie.net/cswikia/images/2/20/Profile-blank-male.png/revision/latest?cb=20150701175801\""
     }
     buildTypes {
         release {

@@ -1,4 +1,4 @@
-package id.divascion.moviecatalogue.view;
+package id.divascion.moviecatalogue.ui;
 
 import android.annotation.SuppressLint;
 import android.os.AsyncTask;
@@ -28,23 +28,22 @@ import id.divascion.moviecatalogue.R;
 import id.divascion.moviecatalogue.adapter.ListTvAdapter;
 import id.divascion.moviecatalogue.model.Api;
 import id.divascion.moviecatalogue.model.Network;
-import id.divascion.moviecatalogue.presenter.Tv;
+import id.divascion.moviecatalogue.model.tv.Tv;
 
-public class TvPopularFragment extends Fragment implements SearchView.OnQueryTextListener {
+public class TvAiringTodayFragment extends Fragment implements SearchView.OnQueryTextListener {
 
     private RecyclerView rvMain;
     private ProgressBar pbMain;
     private ArrayList<Tv> listTv;
     private ArrayList<Tv> tempTv;
+    private ListTvAdapter listTvAdapter;
     private SearchView searchView;
-    private ListTvAdapter listFilmAdapter;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_tv_popular, container, false);
-        rvMain = view.findViewById(R.id.rv_main2);
-        pbMain = view.findViewById(R.id.pb_main2);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_tv_airing_today, container, false);
+        rvMain = view.findViewById(R.id.rv_main);
+        pbMain = view.findViewById(R.id.pb_main);
         return view;
     }
 
@@ -68,14 +67,14 @@ public class TvPopularFragment extends Fragment implements SearchView.OnQueryTex
     }
 
     private void showRecyclerList() {
-        listFilmAdapter = new ListTvAdapter(getActivity());
-        listFilmAdapter.setListTv(listTv);
+        listTvAdapter = new ListTvAdapter(getActivity());
+        listTvAdapter.setListTv(listTv);
         rvMain.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvMain.setAdapter(listFilmAdapter);
+        rvMain.setAdapter(listTvAdapter);
     }
 
     private void loadData() {
-        URL url = Api.getPopular();
+        URL url = Api.getAiring();
         Log.e("url", url.toString());
         new TvAsyncTask().execute(url);
     }
@@ -101,7 +100,7 @@ public class TvPopularFragment extends Fragment implements SearchView.OnQueryTex
             listTv.clear();
             listTv.addAll(tempTv);
         }
-        listFilmAdapter.setListTv(listTv);
+        listTvAdapter.setListTv(listTv);
         return true;
     }
 
@@ -123,7 +122,6 @@ public class TvPopularFragment extends Fragment implements SearchView.OnQueryTex
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            Log.e("result", result);
             return result;
         }
 
@@ -147,7 +145,7 @@ public class TvPopularFragment extends Fragment implements SearchView.OnQueryTex
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            listFilmAdapter.setListTv(listTv);
+            listTvAdapter.setListTv(listTv);
         }
 
     }

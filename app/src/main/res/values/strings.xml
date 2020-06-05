@@ -13,5 +13,12 @@
     <string name="tv_top_rated">TV Top Rated</string>
     <string name="tv_favorited">Favorite List</string>
     <string name="search">Search</string>
+    <string name="crew">Crew</string>
+    <string name="cast">Cast</string>
+    <string name="cast_and_crew">Cast and Crew</string>
+    <string name="image">image</string>
+
+    <string name="crew_data_not_found">Crew Data Not Found.</string>
+    <string name="cast_data_not_found">Cast Data Not Found.</string>
 
 </resources>

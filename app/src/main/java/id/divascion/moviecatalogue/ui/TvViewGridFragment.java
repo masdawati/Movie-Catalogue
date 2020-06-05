@@ -1,12 +1,13 @@
-package id.divascion.moviecatalogue.view;
+package id.divascion.moviecatalogue.ui;
 
 import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,27 +27,40 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import id.divascion.moviecatalogue.R;
-import id.divascion.moviecatalogue.adapter.ListTvAdapter;
+import id.divascion.moviecatalogue.adapter.GridTvAdapter;
 import id.divascion.moviecatalogue.model.Api;
 import id.divascion.moviecatalogue.model.Network;
-import id.divascion.moviecatalogue.presenter.Tv;
+import id.divascion.moviecatalogue.model.tv.Tv;
 
-public class TvTopRatedFragment extends Fragment implements SearchView.OnQueryTextListener {
+public class TvViewGridFragment extends Fragment implements SearchView.OnQueryTextListener {
+    private static final String ARG_PARAM1 = "CODE";
 
-    private RecyclerView rvMain;
-    private ProgressBar pbMain;
+    private ProgressBar pb;
+    private RecyclerView rv;
     private ArrayList<Tv> listTv;
     private ArrayList<Tv> tempTv;
+    private GridTvAdapter listTvAdapter;
     private SearchView searchView;
-    private ListTvAdapter listFilmAdapter;
+
+    private String code;
+
+    public TvViewGridFragment() {
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            code = getArguments().getString(ARG_PARAM1);
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_tv_top_rated, container, false);
-        rvMain = view.findViewById(R.id.rv_main3);
-        pbMain = view.findViewById(R.id.pb_main3);
+        View view = inflater.inflate(R.layout.fragment_tv_view_grid, container, false);
+        rv = view.findViewById(R.id.rv_grid);
+        pb = view.findViewById(R.id.pb_grid);
         return view;
     }
 
@@ -59,29 +74,6 @@ public class TvTopRatedFragment extends Fragment implements SearchView.OnQueryTe
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        setHasOptionsMenu(true);
-        listTv = new ArrayList<>();
-        tempTv = new ArrayList<>();
-        showRecyclerList();
-        loadData();
-    }
-
-    private void showRecyclerList(){
-        listFilmAdapter = new ListTvAdapter(getActivity());
-        listFilmAdapter.setListTv(listTv);
-        rvMain.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvMain.setAdapter(listFilmAdapter);
-    }
-
-    private void loadData() {
-        URL url = Api.getTopRated();
-        Log.e("url", url.toString());
-        new TvAsyncTask().execute(url);
-    }
-
-    @Override
     public boolean onQueryTextSubmit(String query) {
         searchView.clearFocus();
         return true;
@@ -89,12 +81,12 @@ public class TvTopRatedFragment extends Fragment implements SearchView.OnQueryTe
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        if (!newText.isEmpty()){
+        if (!newText.isEmpty()) {
             listTv.clear();
             newText = newText.toLowerCase();
-            for (int i =0; i<tempTv.size(); i++){
+            for (int i = 0; i < tempTv.size(); i++) {
                 String title = tempTv.get(i).getName().toLowerCase();
-                if (title.contains(newText)){
+                if (title.contains(newText)) {
                     listTv.add(tempTv.get(i));
                 }
             }
@@ -102,8 +94,49 @@ public class TvTopRatedFragment extends Fragment implements SearchView.OnQueryTe
             listTv.clear();
             listTv.addAll(tempTv);
         }
-        listFilmAdapter.setListTv(listTv);
+        listTvAdapter.setListTv(listTv);
         return true;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setHasOptionsMenu(true);
+        listTv = new ArrayList<>();
+        tempTv = new ArrayList<>();
+        showRecyclerList();
+        loadData();
+    }
+
+    private void showRecyclerList() {
+        listTvAdapter = new GridTvAdapter(getActivity());
+        listTvAdapter.setListTv(listTv);
+        rv.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+        rv.setAdapter(listTvAdapter);
+    }
+
+    private void loadData() {
+        URL url;
+        switch (code) {
+            case "airing":
+                url = Api.getAiring();
+                Log.e("url", url.toString());
+                new TvAsyncTask().execute(url);
+                break;
+            case "popular":
+                url = Api.getPopular();
+                Log.e("url", url.toString());
+                new TvAsyncTask().execute(url);
+                break;
+            case "top":
+                url = Api.getTopRated();
+                Log.e("url", url.toString());
+                new TvAsyncTask().execute(url);
+                break;
+            default:
+                Toast.makeText(getActivity(), "Error, code is empty.", Toast.LENGTH_SHORT).show();
+                break;
+        }
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -111,8 +144,8 @@ public class TvTopRatedFragment extends Fragment implements SearchView.OnQueryTe
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pbMain.setVisibility(View.VISIBLE);
-            rvMain.setVisibility(View.GONE);
+            pb.setVisibility(View.VISIBLE);
+            rv.setVisibility(View.GONE);
         }
 
         @Override
@@ -124,22 +157,21 @@ public class TvTopRatedFragment extends Fragment implements SearchView.OnQueryTe
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            Log.e("result", result);
             return result;
         }
 
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            rvMain.setVisibility(View.VISIBLE);
-            pbMain.setVisibility(View.GONE);
+            rv.setVisibility(View.VISIBLE);
+            pb.setVisibility(View.GONE);
 
             try {
                 tempTv.clear();
                 JSONObject jsonObject = new JSONObject(s);
                 JSONArray jsonArray = jsonObject.getJSONArray("results");
 
-                for (int i=0; i<jsonArray.length(); i++){
+                for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject object = jsonArray.getJSONObject(i);
                     Tv tvList = new Tv(object);
                     listTv.add(tvList);
@@ -148,9 +180,8 @@ public class TvTopRatedFragment extends Fragment implements SearchView.OnQueryTe
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            listFilmAdapter.setListTv(listTv);
+            listTvAdapter.setListTv(listTv);
         }
 
     }
-
 }
