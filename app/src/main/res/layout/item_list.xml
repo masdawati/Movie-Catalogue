@@ -20,7 +20,8 @@
             android:id="@+id/iv_item_photo"
             android:layout_width="100dp"
             android:layout_height="120dp"
-            android:layout_marginEnd="16dp" />
+            android:layout_marginEnd="16dp"
+            android:contentDescription="@string/image" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -43,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
                 android:fontFamily="sans-serif-light"
-                android:text="@string/idunno"
+                android:text="@string/do_not_know"
                 android:textColor="@color/colorGrey"
                 android:textSize="12sp" />
 
